@@ -911,7 +911,6 @@ static ListaEstrelas *GAdestroiEstrela(ListaVertices *v, int a)
             {
                 NodoAnterior = NodoAtual->prox;
                 free(NodoAtual);
-                NodoAtual = NodoAnterior->prox;
             }
 
             NodoAnterior = NodoAtual;
