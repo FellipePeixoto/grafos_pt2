@@ -627,19 +627,16 @@ Grafo* GGcarregaGrafo(char arq_nome[]) {
             }
         }
         
+        fscanf(arq,"%i %i %i",&ArestaID,&origem,&destino);
+        
         /*cria a quantidade maxima de arestas*/        
-        for(i=0;i<num_arestas;i++)
+        for(i=1;i<=semente_aresta;i++)
         {
-            /*vetor de identificadores das arestas*/
-            fscanf(arq,"%i %i %i",&ArestaID,&origem,&destino);
-            arestaCriadaID = GAcriaAresta(ptr,origem,destino);
-            
-            /*destroi as arestas desnecessarias*/
-            while(arestaCriadaID!=ArestaID)
+            if(ArestaID==i)
             {
                 arestaCriadaID = GAcriaAresta(ptr,origem,destino);
-                GAdestroiEstrela(ptr->pv,arestaCriadaID-1);
-                GAdestroiAresta(ptr,arestaCriadaID-1);
+                GApegaArestaEndereco(ptr,arestaCriadaID)->id = ArestaID;
+                fscanf(arq,"%i %i %i",&ArestaID,&origem,&destino);
             }
         }
 
@@ -650,7 +647,81 @@ Grafo* GGcarregaGrafo(char arq_nome[]) {
     return NULL;
 }
 
-/*RECORTE 2 -----------------------------------------------------------------*/
+int GBsalvaGrafo(Grafo* p, char arq_nome[]) 
+{
+    FILE* arq;
+
+    arq = fopen(arq_nome, "w");
+
+    if (arq != NULL) {
+
+        fprintf(arq, "%i %i\n", GInumeroVertices(p), GInumeroArestas(p));
+        fprintf(arq, "%i %i\n", p->sementeVertices,p->sementeArestas);
+
+        /*variavel de controle*/
+        int i;
+        
+        /*impressao dos IDS dos vertices*/
+        ListaVertices *AuxVertice = p->pv;
+        while(AuxVertice)
+        {
+            fprintf(arq,"%i\n",AuxVertice->id);
+            AuxVertice = AuxVertice->prox;
+        }
+        
+        ListaArestas *AuxAresta = p->pa;
+        while(AuxAresta!=NULL)
+        {
+            fprintf(arq, "%i %i %i\n",AuxAresta->id, AuxAresta->origem->id,AuxAresta->destino->id);
+            AuxAresta = AuxAresta->prox;
+        }
+
+        fclose(arq);
+        return 1;
+    }
+    return 0;
+}
+
+int GIpegaGrau(Grafo* p, int v) 
+{
+    ListaEstrelas *AuxEstrela = p->pv;
+    
+    /*confere se o vertice informado existe*/
+    if (v <= p->sementeVertices) 
+    {
+        int grau = 0;
+        
+        /*percorre a lista de estrela do vertice
+         enquanto houver elementos na lista de estrelas do vertice
+         a variavel grau e incrementada, contando a quantidade de
+         arestas estao associadas aquele vertice*/
+        while(AuxEstrela!=NULL)
+        {
+            grau++;
+            AuxEstrela = AuxEstrela->prox;
+        }
+        
+        return grau;
+    }
+    return 0;
+}
+
+int GAprimaAresta(Grafo* p, int v) {
+    /*confere se o vertice existe no grafo*/
+    if (v < p->nextvertex) {
+        /*confere se existe aresta no grafo*/
+        if (p->nextedge > 1) {
+            int i;
+            /*procura pela primeira ocorrencia do vertice*/
+            for (i = 1; i < p->nextedge; i++) {
+                if ((p->vetAresta[i].a == v) || (p->vetAresta[i].b == v)) {
+                    return i;
+                }
+            }
+        }
+    }
+    return 0;
+}
 
 int GAproxAresta(Grafo* p, int v, int a1)
 {
