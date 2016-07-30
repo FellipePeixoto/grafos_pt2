@@ -281,13 +281,13 @@ int GAcriaAresta(Grafo* p, int v1, int v2)
                 NodoNovo->origem = GVpegaVertice(p->pv,v1);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(GVpegaVertice(p->pv,v1),NodoNovo);
+                GVcriaEstrela(NodoNovo->origem,NodoNovo);
                 
                 /*destino recebe o endereco para o id de vertice*/
                 NodoNovo->destino = GVpegaVertice(p->pv,v2);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(GVpegaVertice(p->pv,v1),NodoNovo);
+                GVcriaEstrela(NodoNovo->destino,NodoNovo);
                 
                 NodoNovo->prox = NULL;
                 
