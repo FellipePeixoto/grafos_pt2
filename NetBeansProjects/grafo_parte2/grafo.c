@@ -117,56 +117,56 @@ int GVcriaVertice(Grafo* p)
     {
         if(p->pv!=NULL)
         {
-            ListaVertices *NodoAnterior;
-            ListaVertices *NodoNovo;
+            ListaVertices *VerticeAnterior;
+            ListaVertices *VerticeNovo;
             
-            NodoNovo = (ListaVertices*) malloc(sizeof(ListaVertices));
+            VerticeNovo = (ListaVertices*) malloc(sizeof(ListaVertices));
             
-            if(NodoNovo!=NULL)
+            if(VerticeNovo!=NULL)
             {
                 /*recebe o primeiro elemento da lista de vertices*/
-                NodoAnterior        = p->pv;
+                VerticeAnterior        = p->pv;
                 
                 /*percorre a lista de vertices*/
-                while(NodoAnterior->prox!=NULL)
+                while(VerticeAnterior->prox!=NULL)
                 {
-                    NodoAnterior = NodoAnterior->prox;
+                    VerticeAnterior = VerticeAnterior->prox;
                 }
                 
                 /*o ultimo elemento da lista aponta para o novo ultimo elemento*/
-                NodoAnterior->prox  = NodoNovo;
+                VerticeAnterior->prox  = VerticeNovo;
                 
                 /*defini as configuracoes padroes do vertice criado*/
-                NodoNovo->id        = NodoAnterior->id + 1;
-                NodoNovo->estrela   = NULL;
-                NodoNovo->prox      = NULL;
+                VerticeNovo->id        = VerticeAnterior->id + 1;
+                VerticeNovo->estrela   = NULL;
+                VerticeNovo->prox      = NULL;
                 
                 /*incrementa da quantidade de vertices*/
                 p->numVertices++;
                 
-                return NodoNovo->id;
+                return VerticeNovo->id;
             }
         }
         else
         {
-            ListaVertices *NodoNovo;
+            ListaVertices *VerticeNovo;
             
-            NodoNovo = (ListaVertices*) malloc(sizeof(ListaVertices));
+            VerticeNovo = (ListaVertices*) malloc(sizeof(ListaVertices));
             
-            if(NodoNovo!=NULL)
+            if(VerticeNovo!=NULL)
             {
                 /*definicao padrao do primeiro elemento da lista*/
-                NodoNovo->id        = 1;
-                NodoNovo->estrela   = NULL;
-                NodoNovo->prox      = NULL;
+                VerticeNovo->id        = 1;
+                VerticeNovo->estrela   = NULL;
+                VerticeNovo->prox      = NULL;
                 
                 /*cabeca da lista aponta para o primeiro elemento inserido*/
-                p->pv = NodoNovo;
+                p->pv = VerticeNovo;
                 
                 /*incremento da quantidade de vertices*/
                 p->numVertices++;
                 
-                return NodoNovo->id;
+                return VerticeNovo->id;
             }
         }
     }
@@ -183,22 +183,22 @@ int GVdestroiVertice(Grafo* p, int v)
         /*confere se a lista de vertices n aponta pra NULL*/
         if(p->pv!=NULL)
         {
-            ListaVertices *NodoAtual;
-            ListaVertices *NodoAnterior = NULL;
+            ListaVertices *VerticeAtual;
+            ListaVertices *VerticeAnterior = NULL;
             
             /*nodo atual recebe o elemento do inicio da lista*/
-            NodoAtual = p->pv;
+            VerticeAtual = p->pv;
             
-            if(NodoAtual->id==v)
+            if(VerticeAtual->id==v)
             {
                 /*inicio da lista aponta para proximo vertice*/
-                p->pv = NodoAtual->prox;
+                p->pv = VerticeAtual->prox;
                 
                 /*destroi estrelas associadas ao vertice*/
-                GVdestroiEstrelas(p,NodoAtual->estrela);
+                GVdestroiEstrelas(p,VerticeAtual->estrela);
                 
                 /*libera a memoria para o sistema*/
-                free(NodoAtual);
+                free(VerticeAtual);
                 p->numVertices--;
                 
                 /*fim do procedimento*/
@@ -208,32 +208,32 @@ int GVdestroiVertice(Grafo* p, int v)
             {
                 /*como o primeiro elemento n e o alvo o anterior pode guardar
                  seu endereco para modificacao posterior*/
-                NodoAnterior = NodoAtual;
+                VerticeAnterior = VerticeAtual;
                 /*nodo atual anda um elemento na fila, uma vez q o anterior n
                  e o alvo*/
-                NodoAtual = NodoAtual->prox;
+                VerticeAtual = VerticeAtual->prox;
                 /*percorre a lista de vertices ate encontrar o elemento q
                  deve ser deletado*/
-                while((NodoAtual!=NULL) && (NodoAtual->id!=v))
+                while((VerticeAtual!=NULL) && (VerticeAtual->id!=v))
                 {
-                    NodoAnterior = NodoAtual;
-                    NodoAtual = NodoAtual->prox;                    
+                    VerticeAnterior = VerticeAtual;
+                    VerticeAtual = VerticeAtual->prox;                    
                 }
                 
                 /*confere se o elemento realmente existe*/
-                if(NodoAtual!=NULL)
+                if(VerticeAtual!=NULL)
                 {
                     /*nodo anterior recebe o elemento pos nodo atual para a lista
                      nao ser descontinuada*/
-                    NodoAnterior->prox = NodoAtual->prox;
+                    VerticeAnterior->prox = VerticeAtual->prox;
 
                     /*o elemento alvo e liberado*/
-                    free(NodoAtual);
+                    free(VerticeAtual);
                     p->numVertices--;
                 }
                 else
                 {
-                    NodoAnterior->prox = NULL;
+                    VerticeAnterior->prox = NULL;
                 }
                 
                 /*fim do procedimento*/
@@ -255,84 +255,84 @@ int GAcriaAresta(Grafo* p, int v1, int v2)
     {
         if(p->pa!=NULL)
         {
-            ListaArestas *NodoNovo;
+            ListaArestas *ArestaNova;
             
-            NodoNovo = (ListaArestas*) malloc(sizeof(ListaArestas));
+            ArestaNova = (ListaArestas*) malloc(sizeof(ListaArestas));
             
             /*confere se foi alocado espaco para o novo nodo*/
-            if(NodoNovo!=NULL)
+            if(ArestaNova!=NULL)
             {
-                ListaArestas *NodoAnterior;
+                ListaArestas *ArestaAnterior;
 
                 /*recebe o endereco do primeiro elemento da lista de arestas*/
-                NodoAnterior = p->pa;
+                ArestaAnterior = p->pa;
 
-                while(NodoAnterior->prox!=NULL)
+                while(ArestaAnterior->prox!=NULL)
                 {
-                    NodoAnterior = NodoAnterior->prox;
+                    ArestaAnterior = ArestaAnterior->prox;
                 }
                 
-                NodoAnterior->prox = NodoNovo;
+                ArestaAnterior->prox = ArestaNova;
                 
                 /*id da aresta... Mesma coisa A id da anterior +1*/
-                NodoNovo->id = NodoAnterior->id+1;
+                ArestaNova->id = ArestaAnterior->id+1;
                 
                 /*origem recebe o endereco para o id de vertice*/
-                NodoNovo->origem = GVpegaVertice(p->pv,v1);
+                ArestaNova->origem = GVpegaVertice(p->pv,v1);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(NodoNovo->origem,NodoNovo);
+                GVcriaEstrela(ArestaNova->origem,ArestaNova);
                 
                 /*destino recebe o endereco para o id de vertice*/
-                NodoNovo->destino = GVpegaVertice(p->pv,v2);
+                ArestaNova->destino = GVpegaVertice(p->pv,v2);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(NodoNovo->destino,NodoNovo);
+                GVcriaEstrela(ArestaNova->destino,ArestaNova);
                 
-                NodoNovo->prox = NULL;
+                ArestaNova->prox = NULL;
                 
                 /*incrementa a quantidade arestas*/
                 p->numArestas++;
                 
                 /*fim da funcao*/
-                return NodoNovo->id;
+                return ArestaNova->id;
             }
         }
         else
         {
-            ListaArestas *NodoNovo;
+            ListaArestas *ArestaNova;
             
-            NodoNovo = (ListaArestas*) malloc(sizeof(ListaArestas));
+            ArestaNova = (ListaArestas*) malloc(sizeof(ListaArestas));
             
-            if(NodoNovo!=NULL)
+            if(ArestaNova!=NULL)
             {
                 /*definicao dos valores padroes do primeiro elemento da lista
                  de arestas*/
-                NodoNovo->id = 1;
-                NodoNovo->prox = NULL;
+                ArestaNova->id = 1;
+                ArestaNova->prox = NULL;
                 
                 /*origem recebe o endereco para o id de vertice*/
-                NodoNovo->origem = GVpegaVertice(p->pv,v1);
+                ArestaNova->origem = GVpegaVertice(p->pv,v1);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(NodoNovo->origem,NodoNovo);
+                GVcriaEstrela(ArestaNova->origem,ArestaNova);
                 
                 /*destino recebe o endereco para o id de vertice*/
-                NodoNovo->destino = GVpegaVertice(p->pv,v2);
+                ArestaNova->destino = GVpegaVertice(p->pv,v2);
                 /*gera elemento na lista de estrelas de vertice
                  lista de vertice >> lista de estrelas*/
-                GVcriaEstrela(NodoNovo->destino,NodoNovo);
+                GVcriaEstrela(ArestaNova->destino,ArestaNova);
                 
-                NodoNovo->prox = NULL;
+                ArestaNova->prox = NULL;
                 
                 /*lista de arestas recebe o primeiro elemento*/
-                p->pa = NodoNovo;
+                p->pa = ArestaNova;
                 
                 /*incrementa a quantidade de arestas*/
                 p->numArestas++;
                 
                 /*fim da funcao*/
-                return NodoNovo->id;
+                return ArestaNova->id;
             }
         }
     }
@@ -346,19 +346,19 @@ int GAdestroiAresta(Grafo* p, int a)
     {
         if(p->pa!=NULL)
         {
-            ListaArestas *NodoAtual;
-            ListaArestas *NodoAnterior = NULL;
+            ListaArestas *ArestaAtual;
+            ListaArestas *ArestaAnterior = NULL;
             
             /*nodo atual recebe o elemento do inicio da lista*/
-            NodoAtual = p->pa;
+            ArestaAtual = p->pa;
             
-            if(NodoAtual->id==a)
+            if(ArestaAtual->id==a)
             {
                 /*lista aponta para o pos elemento de nodo atual*/
-                p->pa = NodoAtual->prox;
+                p->pa = ArestaAtual->prox;
                 
                 /*libera a memoria do elemento*/
-                free(NodoAtual);
+                free(ArestaAtual);
                 
                 /*fim do funcao*/
                 return 0;
@@ -367,28 +367,28 @@ int GAdestroiAresta(Grafo* p, int a)
             {
                 /*nodo anterior e o elemento q vai receber o endereco
                  para o elemento pos NodoAtual*/
-                NodoAnterior = NodoAtual;
-                NodoAtual = NodoAtual->prox;
+                ArestaAnterior = ArestaAtual;
+                ArestaAtual = ArestaAtual->prox;
                 
                 /*percorre a lista ate encontrar o elemento alvo*/
-                while((NodoAtual!=NULL) && (NodoAtual->id!=a))
+                while((ArestaAtual!=NULL) && (ArestaAtual->id!=a))
                 {
-                    NodoAnterior = NodoAtual;
-                    NodoAtual = NodoAtual->prox;
+                    ArestaAnterior = ArestaAtual;
+                    ArestaAtual = ArestaAtual->prox;
                 }
                 
                 /*confere se o elemento existe*/
-                if(NodoAtual!=NULL)
+                if(ArestaAtual!=NULL)
                 {
-                    NodoAnterior->prox = NodoAtual->prox;
+                    ArestaAnterior->prox = ArestaAtual->prox;
                     
                     /*memoria do elemento alvo e liberada*/
-                    free(NodoAtual);
+                    free(ArestaAtual);
                     p->numArestas--;
                 }
                 else
                 {
-                    NodoAnterior = NULL;
+                    ArestaAnterior = NULL;
                 }
                 /*fim da funcao*/
                 return 0;
@@ -820,40 +820,39 @@ int GValfa(Grafo* p, int a)
  em caso de erro*/
 static ListaEstrelas *GVcriaEstrela(ListaVertices *v,ListaArestas *a)
 {
-    ListaVertices *NodoAux = v;
-    ListaEstrelas *NodoAtual;
-    ListaEstrelas *NodoAnterior;
-    NodoAtual = (ListaEstrelas*) malloc(sizeof(ListaEstrelas));
+    ListaEstrelas *EstrelaNova;
+    ListaEstrelas *EstrelaAnterior;
+    EstrelaNova = (ListaEstrelas*) malloc(sizeof(ListaEstrelas));
     
-    if((a!=NULL) && (NodoAtual!=NULL) &&  (NodoAux!=NULL))
+    if((a!=NULL) && (EstrelaNova!=NULL) &&  (v!=NULL))
     {
-        NodoAtual->prox = NULL;
-        NodoAtual->aresta = a;
+        EstrelaNova->prox = NULL;
+        EstrelaNova->aresta = a;
         
-        if(NodoAux->estrela!=NULL)
+        if(v->estrela!=NULL)
         {
             /*nodo anterior recebe o primeiro elemento da lista de estrelas*/
-            NodoAnterior = NodoAux->estrela;
+            EstrelaAnterior = v->estrela;
             /*percorre a lista de estrelas ate encontrar o ultimo elemento*/
-            while(NodoAnterior->prox!=NULL)
+            while(EstrelaAnterior->prox!=NULL)
             {
-                NodoAnterior = NodoAnterior->prox;
+                EstrelaAnterior = EstrelaAnterior->prox;
             }
             
             /*ultimo nodo aponta para o novo elemento*/
-            NodoAnterior = NodoAtual;
+            EstrelaAnterior->prox = EstrelaNova;
             
             /*fim do procedimento*/
-            return NodoAtual;
+            return EstrelaNova;
         }
         /*caso seja a primeira estrela*/
         else
         {
             /*lista de estrelas aponta para o primeiro elemento inserido*/
-            v->estrela = NodoAtual;
+            v->estrela = EstrelaNova;
 
             /*fim do procedimento*/
-            return NodoAtual;
+            return EstrelaNova;
         }
     }
 }
@@ -894,27 +893,27 @@ static ListaEstrelas *GVdestroiEstrelas(Grafo *p, ListaEstrelas *e)
 static ListaEstrelas *GAdestroiEstrela(ListaVertices *v, int a)
 {
     ListaVertices *AuxVertice = v;
-    ListaEstrelas *NodoAnterior;
-    ListaEstrelas *NodoAtual;
+    ListaEstrelas *EstrelaAnterior;
+    ListaEstrelas *EstrelaAtual;
 
     /*percorre a lista de vertices*/
     while(AuxVertice!=NULL)
     {
-        NodoAtual = AuxVertice->estrela;
+        EstrelaAtual = AuxVertice->estrela;
         /*percorre a lista de estrelas do vertice em busca de arestas associadas
          aquela estrela*/
-        while(NodoAtual!=NULL)
+        while(EstrelaAtual!=NULL)
         {
             /*caso o nodo atual estiver associado aquela aresta ele deve ser
              deletado*/
-            if(NodoAtual->aresta->id==a)
+            if(EstrelaAtual->aresta->id==a)
             {
-                NodoAnterior = NodoAtual->prox;
-                free(NodoAtual);
+                EstrelaAnterior = EstrelaAtual->prox;
+                free(EstrelaAtual);
             }
 
-            NodoAnterior = NodoAtual;
-            NodoAtual = NodoAtual->prox;
+            EstrelaAnterior = EstrelaAtual;
+            EstrelaAtual = EstrelaAtual->prox;
         }
         
         AuxVertice = AuxVertice->prox;
@@ -957,19 +956,19 @@ static ListaVertices *GVpegaVertice(ListaVertices *vertices, int v)
  em caso de erro*/
 static ListaArestas *GApegaArestaEndereco(Grafo *p, int a)
 {
-    ListaArestas *NodoAux = p->pa;
+    ListaArestas *AuxAresta = p->pa;
     
     /*percorre a lista de arestas*/
-    while(NodoAux!=NULL)
+    while(AuxAresta!=NULL)
     {
         /*caso encontre a aresta com o ID a, retorna seu endereco*/
-        if(NodoAux->id==a)
+        if(AuxAresta->id==a)
         {
             /*fim da funcao*/
-            return NodoAux;
+            return AuxAresta;
         }
         
-        NodoAux = NodoAux->prox;
+        AuxAresta = AuxAresta->prox;
     }
     
     /*caos de erro*/
