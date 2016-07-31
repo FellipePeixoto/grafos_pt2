@@ -1,36 +1,42 @@
 #ifndef GRAFOS_H
 #define GRAFOS_H
 
-typedef struct Vertice ListaVertices;
-typedef struct Aresta ListaArestas;
-typedef struct estrela ListaEstrelas;
+#include "busca_largura.h"
+
+typedef struct Vertice TipoVertice;
+typedef struct Aresta TipoAresta;
+typedef struct estrela TipoEstrela;
 typedef struct grafo Grafo;
 
 struct estrela{
     /*ponteiro referencia o proximo elemento na lista*/
-    ListaEstrelas   *prox;
+    TipoEstrela   *prox;
     /*ponteiro para as respectivas arestas conectadas ao vertice*/
-    ListaArestas    *aresta;
+    TipoAresta    *aresta;
 };
 
 struct Vertice {
     /*identificador do vertice*/
-    int             id;
+    int           id;
     /*ponteiro referencia o proximo elemento na lista*/
-    ListaVertices   *prox;
+    TipoVertice   *prox;
     /*ponteiro para a lista de conexoes do vertice*/
-    ListaEstrelas   *estrela;
+    TipoEstrela   *estrela;
+    
+    Cores         cor;
 };
 
 struct Aresta {
     /*identificador da aresta*/
     int             id;
     /*ponteiro referencia o proximo elemento na lista*/
-    ListaArestas   *prox;
+    TipoAresta   *prox;
     /*ponteiro para o endereco do vertice de partida da aresta*/
-    ListaVertices   *origem;
+    TipoVertice   *origem;
     /*ponteiro para o endereco do vertice de chegada da aresta*/
-    ListaVertices   *destino;
+    TipoVertice   *destino;
+    
+    int visitada; 
 };
 
 /*estrutura do grafo*/
@@ -45,8 +51,8 @@ struct grafo {
     
   
     /*ponteiro para as Listas de arestas e vertices, respectivamente*/
-    ListaArestas    *pa;
-    ListaVertices   *pv;
+    TipoAresta    *pa;
+    TipoVertice   *pv;
 };
 
 /*  v - indica a quantidade de vertices
@@ -121,6 +127,17 @@ int GApegaArestaDir(Grafo* p, int v1, int v2);
  interligados pela aresta
  na saida deve retornar o identificador da aresta ou 0 caso nao exista*/
 int GApegaAresta(Grafo* p, int v1, int v2);
+
+/*
+ Busca vertice na lista de vertices
+ atraves de seu ID
+ 
+ _vertices      ponteiro para o tipo ListaVertices
+ _v             inteiro ID do vertice
+ 
+ Retorna o identificador do vertice encontrado
+ Ou NULL caso o vertice nao existir*/
+TipoVertice *GVpegaVertice(TipoVertice *vertices, int v);
 
 /*Retorna  o identificador do primeiro vertice criado no grafo
  *na entrada e necessario informar o grafo
