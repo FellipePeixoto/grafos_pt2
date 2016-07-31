@@ -708,19 +708,10 @@ int GIpegaGrau(Grafo* p, int v)
 
 int GAprimaAresta(Grafo* p, int v) {
     /*confere se o vertice existe no grafo*/
-    if (v < p->nextvertex) {
-        /*confere se existe aresta no grafo*/
-        if (p->nextedge > 1) {
-            int i;
-            /*procura pela primeira ocorrencia do vertice*/
-            for (i = 1; i < p->nextedge; i++) {
-                if ((p->vetAresta[i].a == v) || (p->vetAresta[i].b == v)) {
-                    return i;
-                }
-            }
-        }
+    if(v<p->sementeVertices)
+    {
+        return GVpegaVertice(p->pv,v)->estrela->aresta->id;
     }
-    return 0;
 }
 
 int GAproxAresta(Grafo* p, int v, int a1)
