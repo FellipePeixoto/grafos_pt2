@@ -26,7 +26,7 @@ struct Aresta {
     /*identificador da aresta*/
     int             id;
     /*ponteiro referencia o proximo elemento na lista*/
-    ListaVertices   *prox;
+    ListaArestas   *prox;
     /*ponteiro para o endereco do vertice de partida da aresta*/
     ListaVertices   *origem;
     /*ponteiro para o endereco do vertice de chegada da aresta*/
