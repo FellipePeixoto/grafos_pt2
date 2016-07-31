@@ -1,12 +1,12 @@
 #ifndef GRAFOS_H
 #define GRAFOS_H
 
-#include "busca_largura.h"
-
 typedef struct Vertice TipoVertice;
 typedef struct Aresta TipoAresta;
 typedef struct estrela TipoEstrela;
 typedef struct grafo Grafo;
+typedef enum cores {preto=0,cinza=1,branco=2} Cores;
+typedef struct fila Fila;
 
 struct estrela{
     /*ponteiro referencia o proximo elemento na lista*/
@@ -53,6 +53,16 @@ struct grafo {
     /*ponteiro para as Listas de arestas e vertices, respectivamente*/
     TipoAresta    *pa;
     TipoVertice   *pv;
+};
+
+struct fila
+{
+    int         QuantidadeCinzas;
+    int         ArestasRestantes;
+    TipoVertice *ElementoIncial;
+    TipoVertice *ElementoAtual;
+    TipoVertice *ElementoFinal;
+    TipoVertice *pHead;
 };
 
 /*  v - indica a quantidade de vertices
@@ -235,5 +245,23 @@ int GVomega(Grafo* p, int a);
 na entrada recebe o grafo, a aresta e o vertice de partida
 na saida e retornado o vertice v2 no extremo oposto ao vertice v1*/
 int GVvizinho(Grafo* p, int a, int v1);
+
+void BuscaLargura(Grafo *ptr, int partida);
+
+Fila *Fcria(Grafo *g);
+
+void Finsere(Fila *f,TipoVertice *v);
+
+TipoVertice *Fretira(Fila *f);
+
+int VerificaVisitaEstrela(TipoVertice *v);
+
+void ColoreVertices(Grafo *p, Cores cor);
+        
+void ArestaReset(Grafo *p, int visita);
+
+void ImprimiDumpVertice(TipoVertice *v,int ativado);
+
+void ImprimiDumpAresta(TipoAresta *a);
 
 #endif /* GRAFOS_H */

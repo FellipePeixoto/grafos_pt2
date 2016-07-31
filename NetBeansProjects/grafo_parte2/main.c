@@ -9,18 +9,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "grafo.h"
-#include "busca_largura.h"
 
 /*
  * 
  */
 int main(int argc, char** argv) {
     
-    Grafo *graf = GGcarregaGrafo("grafo1.txt");
+    Grafo *graf = GGcarregaGrafo("grafo2.txt");
     
-    int i;
+    GBsalvaGrafo(graf,"vaidan.txt");
     
-    BuscaLargura(graf,1);
+    //BuscaLargura(graf,1);
         
     return (EXIT_SUCCESS);
 }
