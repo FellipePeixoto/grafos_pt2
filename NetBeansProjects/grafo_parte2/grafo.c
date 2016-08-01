@@ -14,16 +14,6 @@
 static TipoEstrela *GVcriaEstrela(TipoVertice *v,TipoAresta *a);
 
 /*
- Destroi estrelas de um vertice 
- e arestas associadas ao vertice
-
- _p     ponteiro para grafo
- _e     ponteiro para o tipo ListaEstrelas
- 
- Retorna NULL em todos os casos*/
-static TipoEstrela *GVdestroiEstrelas(Grafo *p, TipoEstrela *e);
-
-/*
  Destroi todas as estrelas associadas
  ao ID de uma aresta
  
@@ -31,7 +21,7 @@ static TipoEstrela *GVdestroiEstrelas(Grafo *p, TipoEstrela *e);
  _a     Identificador da aresta que vai ser deletada
  
  retorna NULL em todos os casos*/
-static TipoEstrela *GAdestroiEstrelasAlvo(Grafo *p,TipoVertice *v, int a);
+static TipoEstrela *GAdestroiEstrelasInvalidas(TipoVertice *v,TipoEstrela *ant,TipoEstrela *e, int a);
 
 /*Busca por aresta e retorna ser endereco
  * atraves de sua ID
@@ -160,6 +150,7 @@ int GVdestroiVertice(Grafo* p, int v)
         {
             TipoVertice *VerticeAtual;
             TipoVertice *VerticeAnterior = NULL;
+            TipoEstrela *EstrelaAtual,*ProximaEstrela;
             
             /*nodo atual recebe o elemento do inicio da lista*/
             VerticeAtual = p->pv;
@@ -167,10 +158,18 @@ int GVdestroiVertice(Grafo* p, int v)
             if(VerticeAtual->id==v)
             {
                 /*inicio da lista aponta para proximo vertice*/
-                p->pv = VerticeAtual->prox;
+                p->pv = VerticeAtual->prox;                
                 
-                /*destroi estrelas associadas ao vertice*/
-                GVdestroiEstrelas(p,VerticeAtual->estrela);
+                EstrelaAtual = VerticeAtual->estrela;
+                
+                while(EstrelaAtual!=NULL)
+                {
+                    ProximaEstrela = EstrelaAtual->prox;
+                    
+                    GAdestroiAresta(p,EstrelaAtual->aresta->id);
+                    
+                    EstrelaAtual = ProximaEstrela;
+                }
                 
                 /*libera a memoria para o sistema*/
                 free(VerticeAtual);
@@ -201,6 +200,17 @@ int GVdestroiVertice(Grafo* p, int v)
                     /*nodo anterior recebe o elemento pos nodo atual para a lista
                      nao ser descontinuada*/
                     VerticeAnterior->prox = VerticeAtual->prox;
+                    
+                    EstrelaAtual = VerticeAtual->estrela;
+                    
+                    while(EstrelaAtual!=NULL)
+                    {
+                        ProximaEstrela = EstrelaAtual->prox;
+                    
+                        GAdestroiAresta(p,EstrelaAtual->aresta->id);
+                    
+                        EstrelaAtual = ProximaEstrela;
+                    }
 
                     /*o elemento alvo e liberado*/
                     free(VerticeAtual);
@@ -332,8 +342,13 @@ int GAdestroiAresta(Grafo* p, int a)
                 /*lista aponta para o pos elemento de nodo atual*/
                 p->pa = ArestaAtual->prox;
                 
+                GAdestroiEstrelasInvalidas(ArestaAtual->origem,ArestaAtual->origem->estrela,ArestaAtual->origem->estrela,ArestaAtual->id);
+                GAdestroiEstrelasInvalidas(ArestaAtual->destino,ArestaAtual->destino->estrela,ArestaAtual->destino->estrela,ArestaAtual->id);
+                
                 /*libera a memoria do elemento*/
                 free(ArestaAtual);
+                ArestaAtual = NULL;
+                p->numArestas--;
                 
                 /*fim do funcao*/
                 return 0;
@@ -357,11 +372,12 @@ int GAdestroiAresta(Grafo* p, int a)
                 {
                     ArestaAnterior->prox = ArestaAtual->prox;
                     
-                    /*memoria do elemento alvo e liberada*/
-                    //GAdestroiEstrelasAlvo(ArestaAtual->origem,ArestaAtual->id);
-                    //GAdestroiEstrelasAlvo(ArestaAtual->destino,ArestaAtual->id);
+                    GAdestroiEstrelasInvalidas(ArestaAtual->origem,ArestaAtual->origem->estrela,ArestaAtual->origem->estrela,ArestaAtual->id);
+                    GAdestroiEstrelasInvalidas(ArestaAtual->destino,ArestaAtual->destino->estrela,ArestaAtual->destino->estrela,ArestaAtual->id);
+                    
                     free(ArestaAtual);
                     p->numArestas--;
+                    ArestaAtual = NULL;
                 }
                 
                 return 0;
@@ -940,42 +956,31 @@ static TipoEstrela *GVcriaEstrela(TipoVertice *v,TipoAresta *a)
 }
 
 /*
- Destroi estrelas de um vertice 
- e arestas associadas ao vertice
-
- _p     ponteiro para grafo
- _e     ponteiro para o tipo ListaEstrelas
- 
- Retorna NULL em todos os casos*/
-static TipoEstrela *GVdestroiEstrelas(Grafo *p, TipoEstrela *e)
-{
-    /*procedimento recursivo que deleta as estrelas e respectivas
-     arestas*/
-    if(e!=NULL)
-    {
-        GAdestroiAresta(p,e->aresta->id);
-        free(e);
-        return GVdestroiEstrelas(p,e->prox);
-    }
-    /*condicao de parada da funcao recursiva*/
-    else
-    {
-        return NULL;
-    }
-}
-
-/*
  Destroi todas as estrelas associadas
  ao ID de uma aresta
  
- _p     ponteiro para o primeiro elemento da lista de vertices
+ _p     ponteiro para o primeiro elemento da lista de estrelas
  _a     Identificador da aresta que vai ser deletada
  
  retorna NULL em todos os casos*/
-static TipoEstrela *GAdestroiEstrelasAlvo(Grafo *p,TipoVertice *v, int a)
-{
-    
-    return NULL;
+static TipoEstrela *GAdestroiEstrelasInvalidas(TipoVertice *v,TipoEstrela *ant,TipoEstrela *e, int a)
+{    
+    if((e!=NULL) && (e->aresta->id!=a))
+    {
+        return GAdestroiEstrelasInvalidas(v,e,e->prox,a);
+    }
+    else if(v->estrela==e)
+    {
+        v->estrela = e->prox;
+        free(e);
+        return NULL;
+    }
+    else
+    {
+        ant->prox = e->prox;
+        free(e);
+        return NULL;
+    }
 }
 
 /*
@@ -985,7 +990,7 @@ static TipoEstrela *GAdestroiEstrelasAlvo(Grafo *p,TipoVertice *v, int a)
  _vertices      ponteiro para o tipo ListaVertices
  _v             inteiro ID do vertice
  
- Retorna o identificador do vertice encontrado
+ Retorna o endereco do vertice encontrado
  Ou NULL caso o vertice nao existir*/
 TipoVertice *GVpegaVertice(TipoVertice *vertices, int v)
 {    
@@ -1034,6 +1039,8 @@ static TipoAresta *GApegaArestaEndereco(Grafo *p, int a)
 Fila *Fcria(Grafo *g)
 {
     Fila *f;
+    
+    f = (Fila*) malloc(sizeof(Fila));
     
     f->ArestasRestantes = g->numArestas;
     f->ElementoIncial = NULL;
@@ -1091,13 +1098,17 @@ void BuscaLargura(Grafo* ptr, int partida)
                 
                 if(VerticeVizinho->cor==branco)
                 {
-                    VerticeVizinho->cor == cinza;
+                    VerticeVizinho->cor = cinza;
                     ImprimiDumpVertice(VerticeVizinho,-1);
                     Finsere(f,VerticeVizinho);
                 }
                 
                 NodoEstrela = NodoEstrela->prox;
             }
+            NodoVertice->cor=preto;
+            ImprimiDumpVertice(NodoVertice,0);
+            f->QuantidadeCinzas--;
+            f->ElementoAtual = f->ElementoAtual->prox;
         }
     }
 }
@@ -1115,23 +1126,35 @@ void Finsere(Fila *f,TipoVertice *v)
     /*para demais elementos, apos o ultimo*/
     if(f->ElementoFinal!=NULL)
     {
-        /*fim da fila*/
-        TipoVertice *ElementoVertice = f->ElementoFinal;
+        TipoVertice *ElementoVertice = (TipoVertice*) malloc(sizeof(TipoVertice));
         
-        /*novo elemento inserido, fim da fila*/
-        ElementoVertice->prox = v;
-        f->ElementoFinal = v;
-        
-        f->QuantidadeCinzas++;
+        if(ElementoVertice!=NULL)
+        {
+            ElementoVertice->id = v->id;
+            ElementoVertice->estrela = v->estrela;
+            ElementoVertice->prox = NULL;
+            
+            f->ElementoFinal->prox = ElementoVertice;
+            f->ElementoFinal = ElementoVertice;
+        }
     }
     /*primeiro elemento da fila*/
     else
     {
-        f->ElementoAtual = v;
-        f->ElementoFinal = v;
-        f->ElementoIncial = v;
+        TipoVertice *ElementoVertice = (TipoVertice*) malloc(sizeof(TipoVertice));
         
-        f->QuantidadeCinzas++;
+        if(ElementoVertice!=NULL)
+        {
+            ElementoVertice->id = v->id;
+            ElementoVertice->estrela = v->estrela;
+            ElementoVertice->prox = NULL;
+            
+            f->ElementoIncial = ElementoVertice;
+            f->ElementoAtual = ElementoVertice;
+            f->ElementoFinal = ElementoVertice;
+
+            f->QuantidadeCinzas++;
+        }
     }
 }
 
